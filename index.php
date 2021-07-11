@@ -162,8 +162,19 @@ $selectHistory = $ctrl->selectHistory();
                                             <select class="form-control form-control-option-user"
                                                     id="exampleFormControlSelect1" name="option">
                                                 <?php
-                                                foreach ($_SESSION['select_option'] as $sel_opt) {
-                                                    echo '<option value="' . $sel_opt . '" ' . (isset($_SESSION['option']) && $_SESSION['option'] == $sel_opt ? 'selected="selected"' : '') . '>' . $sel_opt . '</option>';
+                                                if (isset($_SESSION['select_option'])){
+                                                    foreach ($_SESSION['select_option'] as $sel_opt) {
+                                                        echo '<option value="' . $sel_opt . '" ' . (isset($_SESSION['option']) && $_SESSION['option'] == $sel_opt ? 'selected="selected"' : '') . '>' . $sel_opt . '</option>';
+                                                    }
+                                                } else {
+                                                    $array_option_select = [];
+                                                    $d = 1;
+                                                    for ($n=0; $n<10; $n++) {
+                                                        $array_option_select[] = $d++;
+                                                    }
+                                                    foreach ($array_option_select as $sel_opt) {
+                                                        echo '<option value="' . $sel_opt . '" ' . (isset($_SESSION['option']) && $_SESSION['option'] == $sel_opt ? 'selected="selected"' : '') . '>' . $sel_opt . '</option>';
+                                                    }
                                                 }
                                                 ?>
                                             </select>

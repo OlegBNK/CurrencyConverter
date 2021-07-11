@@ -1,0 +1,71 @@
+body {
+    background-color: darkslategrey;
+    color: #fff;
+}
+
+.container-user {
+    width: 1240px;
+    background-color: #343a40;
+    margin: 100px auto auto;
+    padding: 20px;
+}
+
+.burger-user {
+    width: 1240px;
+    background-color: azure;
+    margin: 0px auto auto;
+}
+
+.form-control-user {
+    background-color: rgba(238, 238, 238, 0.93);
+}
+.form-control-option-user { width: 65px;}
+
+.form-control-user:hover {
+    background-color: rgba(255, 255, 255, 0.88);
+}
+
+.list-group-user li {
+    font-size: small;
+    background-color: #464d54;
+}
+
+.list-group-user .list-group-item-user  {
+    font-size: small;
+    background-color: #59626b;
+    border: 1px solid #d221b4;
+}
+
+.list-group-item-user .history-user-1{
+    border: 1px solid white;
+    max-width: max-content;
+}
+
+.container-history-col-12{
+    padding: 9px 6px 9px 3px;
+}
+
+.crrnc_hstr-fluide{
+    display: flex;
+}
+.crrnc_hstr-fluide div{
+    background-color: #565e6766;
+    font-size: small;
+    padding: 4px;
+}
+
+.crrnc_hstr_date{ flex-basis: 70px; text-align: center;}
+.crrnc_hstr_from_val { flex-basis: 248px; text-align-last: end;}
+.crrnc_hstr_from_txt { flex-basis: 150px;}
+.crrnc_hstr_equally{ flex-basis: 38px;}
+.crrnc_hstr_to_val{ flex-basis: 248px; text-align-last: end;}
+.crrnc_hstr_to_txt{ flex-basis: 150px;}
+
+.form-group-user {
+    width: 60px;
+    font-size: 14px;
+}
+
+.list-user {
+    font-size: 14px;
+}

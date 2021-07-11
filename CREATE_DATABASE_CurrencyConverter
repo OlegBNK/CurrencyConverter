@@ -1,0 +1,39 @@
+
+#DROP DATABASE CurrencyConverter;
+
+CREATE DATABASE CurrencyConverter DEFAULT CHARACTER SET utf8 collate utf8_general_ci;
+
+SHOW DATABASES;
+
+USE CurrencyConverter;
+
+SHOW TABLES;
+
+CREATE TABLE IF NOT EXISTS history
+(
+    id                    INT(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    checked_value         FLOAT(4),
+    checked_r030          INTEGER(3),
+    checked_txt           VARCHAR(100),
+    checked_rate          FLOAT(4),
+    checked_cc            VARCHAR(3),
+    checked_exchangedate  DATETIME,
+    received_value        FLOAT(4),
+    received_r030         INTEGER(3),
+    received_txt          VARCHAR(100),
+    received_rate         FLOAT(4),
+    received_cc           VARCHAR(3),
+    received_exchangedate DATETIME,
+    created_at            DATETIME
+) CHARACTER SET utf8
+  COLLATE utf8_general_ci COMMENT = 'история запросов';
+
+CREATE TABLE IF NOT EXISTS setting
+(
+    id   INT(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    view VARCHAR(7),
+    txt  VARCHAR(100)
+) CHARACTER SET utf8
+  COLLATE utf8_general_ci COMMENT = 'настройка отображения валют';
+
+SHOW TABLES;

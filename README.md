@@ -1,1 +1,1 @@
-для сиздания базы используйте файл CREATE_DATABASE_CurrencyConverter
+для создания базы используйте файл CREATE_DATABASE_CurrencyConverter

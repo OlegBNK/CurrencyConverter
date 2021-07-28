@@ -2,63 +2,81 @@
 
 require_once("Repositories/SettingRepository.php");
 require_once("Repositories/HistoryRepository.php");
+require_once("Repositories/CurrencyApiRepository.php");
 
 class CurrencyController
 {
-    public $ua_currency = [[
-        "r030" => "980",
-        'txt' => 'Українська гривня',
-        'rate' => "1",
-        'cc' => 'UAH',
-        'exchangedate' => '11.08.2020']];
+    /**
+     * @var SettingRepository
+     */
+    private $settingRepository;
+    /**
+     * @var HistoryRepository
+     */
+    private $historyRepository;
+    /**
+     * @var CurrencyApiRepository
+     */
+    private $currencyApiRepository;
 
-    public $arrayCurrency = [];
-    public $settingRepository;
-    public $historyRepository;
-
-    public function __construct(SettingRepository $settingRepository, HistoryRepository $historyRepository)
+    public function __construct()
     {
-        $this->settingRepository = $settingRepository;
-        $this->historyRepository = $historyRepository;
+        $this->settingRepository = new SettingRepository();
+        $this->historyRepository = new HistoryRepository();
+        $this->currencyApiRepository = new CurrencyApiRepository();
     }
 
-    public function json_decoded() // get currency from api - переименовать
+    public function index(array $form): void
     {
-        $url_api = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url_api);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $json = curl_exec($ch);
-        return array_merge($this->ua_currency, json_decode($json, true));
-    }
-
-    public function addSetting($txt, $view) //
-    {
-        $this->settingRepository->add($txt, $view);
-    }
-
-    public function updateSetting($txt, $view) //
-    {
-        $this->settingRepository->Update($txt, $view);
-    }
-
-    public function countSetting() //
-    {
-        return $this->settingRepository->count();
-    }
-
-    public function CurrencySelectSetting()
-    {
-        $array = $this->settingRepository->selectViewCurrency();
-        foreach ($array as $item) {
-            $this->arrayCurrency[$item['txt']] = $item['view'];
+        if (isset($form['action']) && $form['action'] == 'convert') {
+            $this->processing_form_history($form);
         }
-        return $array;
+        if (isset($form['action']) && $form['action'] == 'setting') {
+            $this->handle_setting_form($form);
+        }
+        if (isset($_SESSION['option'])) {
+            $this->historyRepository->set_count_select_history($_SESSION['option']);
+        }
+
+        $all_currencies_raw = $this->currencyApiRepository->get_currencies_from_api();
+        $all_currencies = array_map(function (array $currency) {
+            $currency['is_popular'] = CurrencyApiRepository::highlighting_popular_currencies($currency['txt']);
+            return $currency;
+        }, $all_currencies_raw);
+        $ua_currency = $this->currencyApiRepository->ua_currency;
+        $currency_select_setting = $this->settingRepository->select_view_currency();
+        $select_history = $this->historyRepository->select_all();
+        require_once('View/form.php');
     }
 
-    public function convertResult($checked_value, $checked_txt, $received_txt)
+    private function processing_form_history(array $convert_form): void
     {
-        foreach ($this->json_decoded() as $item) {
+        $checked_value = $_SESSION['checked_value'] = $convert_form['checked_value'];
+        $checked_txt = $_SESSION['checked_txt'] = $convert_form['checked_txt'];
+        $received_txt = $_SESSION['received_txt'] = $convert_form['received_txt'];
+        $this->convert_result($checked_value, $checked_txt, $received_txt);
+    }
+
+
+    private function handle_setting_form(array $settings_form): void
+    {
+        $json_decoded = $this->currencyApiRepository->get_currencies_from_api();
+        $set_count = ($this->settingRepository->count() > 1) ? 1 : 0;
+        foreach ($json_decoded as $item) {
+            $check = in_array($item['cc'], $settings_form['currency']) ? 'checked' : "";
+            if ($set_count == 0) {
+                $this->settingRepository->add($item['txt'], $check);
+            } else {
+                $this->settingRepository->update($item['txt'], $check);
+            }
+        }
+        $_SESSION['select_option'] = range(1, 10);
+        $_SESSION['option'] = (isset($settings_form['option'])) ? $settings_form['option'] : 10;
+    }
+
+    private function convert_result(float $checked_value, string $checked_txt, string $received_txt): void
+    {
+        foreach ($this->currencyApiRepository->get_currencies_from_api() as $item) {
             switch ($item['txt']) {
                 case $checked_txt:
                     $checked_r030 = $item['r030'];
@@ -79,31 +97,5 @@ class CurrencyController
         }
         $received_value = $checked_value * ($checked_rate / $received_rate);
         $this->historyRepository->add($checked_value, $checked_r030, $checked_txt, $checked_rate, $checked_cc, $checked_exchangedate, $received_value, $received_r030, $received_txt, $received_rate, $received_cc, $received_exchangedate);
-    }
-
-    public function countSelectHistoryFromHistoryRepository($count_from_post)
-    {
-        return $this->historyRepository->setCountSelectHistory($count_from_post);
-    }
-
-    public function selectHistory()
-    {
-        return $this->historyRepository->selectAll();
-
-    }
-
-    public function highlightingPopularCurrencies($json_decoded_value_txt)
-    {
-        $highlightingPopularCurrencies = [
-            "Євро",
-            "Долар США",
-            "Українська гривня",
-            "Російський рубль",
-        ];
-        foreach ($highlightingPopularCurrencies as $value) {
-            if ($value == $json_decoded_value_txt) {
-                return true;
-            }
-        }
     }
 }

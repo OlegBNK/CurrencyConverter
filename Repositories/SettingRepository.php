@@ -1,18 +1,14 @@
 <?php
 
+require_once ('Service/DatabaseConnection.php');
+
 class SettingRepository
 {
     private $connection;
 
     public function __construct()
     {
-        $servername = "localhost";
-        $username = "root";
-        $password = "root";
-        $dbname = "CurrencyConverter";
-
-        $this->connection = new PDO("mysql:host=$servername; dbname=$dbname;charset=UTF8", $username, $password);
-        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->connection = DatabaseConnection::get_PDO();
     }
 
     public function __destruct()
@@ -34,7 +30,7 @@ class SettingRepository
         $this->connection->exec($sql);
     }
 
-    public function Update($txt, $view) //
+    public function update($txt, $view) //
     {
         $this->connection->exec("UPDATE setting SET view = '$view' WHERE txt = '$txt'");
     }
@@ -46,12 +42,15 @@ class SettingRepository
         return $result->fetchColumn();
     }
 
-    public function selectViewCurrency() //
+    public function select_view_currency(): array
     {
         $conn = $this->connection;
-        $sth = $conn->query("SELECT view, txt FROM setting WHERE view='checked'");
+        $sth = $conn->query("SELECT txt FROM setting WHERE view='checked'");
         $sth->execute();
-        $result = $sth->fetchAll();
-        return $result;
-        }
+        $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(function (array $currencySetting) {
+            return $currencySetting['txt'];
+        }, $result);
+    }
 }

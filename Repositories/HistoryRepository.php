@@ -1,6 +1,9 @@
 <?php
 
+//namespace Repository;
+
 require_once("Model/History.php");
+require_once ('Service/DatabaseConnection.php');
 
 class HistoryRepository
 {
@@ -9,13 +12,7 @@ class HistoryRepository
 
     public function __construct()
     {
-        $servername = "localhost";
-        $username = "root";
-        $password = "root";
-        $dbname = "CurrencyConverter";
-
-        $this->connection = new PDO("mysql:host=$servername; dbname=$dbname;charset=UTF8", $username, $password);
-        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+       $this->connection = DatabaseConnection::get_PDO();
     }
 
     public function __destruct()
@@ -32,16 +29,19 @@ class HistoryRepository
         $this->connection->exec($query);
     }
 
-    public function setCountSelectHistory($count_from_post)
+    public function set_count_select_history($count_from_post)
     {
         $this->countSelectHistory = $count_from_post;
     }
 
-    public function selectAll()
+    /**
+     * @return History[]
+     */
+    public function select_all() : array
     {
         $arrayHistory = [];
         $conn = $this->connection;
-        $sth = $conn->query("SELECT * FROM (SELECT * FROM history ORDER BY id DESC LIMIT $this->countSelectHistory) t ORDER BY id;");
+        $sth = $conn->query("SELECT * FROM history ORDER BY id DESC LIMIT $this->countSelectHistory;");
         $sth->execute();
         $result = $sth->fetchAll();
 

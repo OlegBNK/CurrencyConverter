@@ -28,11 +28,15 @@ class CurrencyController
 
     public function index(array $form): void
     {
-        if (isset($form['action']) && $form['action'] == 'convert') {
-            $this->processing_form_history($form);
+        if (isset($form['checked_value']) && is_numeric($form['checked_value']) && isset($form['checked_txt']) && isset($form['received_txt'])) {
+            if (isset($form['action']) && $form['action'] == 'convert') {
+                $this->processing_form_history($form);
+            }
         }
-        if (isset($form['action']) && $form['action'] == 'setting') {
-            $this->handle_setting_form($form);
+        if (isset($form['currency'])) {
+            if (isset($form['action']) && $form['action'] == 'setting') {
+                $this->handle_setting_form($form);
+            }
         }
         if (isset($_SESSION['option'])) {
             $this->historyRepository->set_count_select_history($_SESSION['option']);

@@ -58,7 +58,7 @@
                                 <div class="col-md-12 mb-3">
                                     <label for="validationCustom03"></label>
                                     <input type="hidden" name="action" value="convert"/>
-                                    <input type="number" name="checked_value" step="0.0001"
+                                    <input type="number" name="checked_value" step="0.0001" min="0.0001"
                                            class="form-control form-control-user " id="validationCustom03"
                                            placeholder="введіть суму" required>
                                 </div>

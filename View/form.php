@@ -27,6 +27,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
             integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
             crossorigin="anonymous"></script>
+
+    <script src="https://kit.fontawesome.com/5d043e8429.js" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -133,7 +136,7 @@
                             data-target="#navbarToggleExternalContent"
                             aria-controls="navbarToggleExternalContent" aria-expanded="false"
                             aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+                        <i class="fas fa-funnel-dollar"></i>
                     </button>
                 </nav>
                 <div class="collapse" id="navbarToggleExternalContent">
